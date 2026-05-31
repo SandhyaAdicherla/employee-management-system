@@ -1,16 +1,26 @@
+require('dotenv').config();
+
 const express = require('express');
 const cors = require('cors');
+
+require('./config/db');
+
+const authRoutes = require('./routes/auth.routes');
+const employeeRoutes = require('./routes/employee.routes');
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 
+app.use('/auth', authRoutes);
+app.use('/employees', employeeRoutes);
+
 app.get('/', (req, res) => {
     res.send('Employee Management API Running');
 });
 
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
