@@ -7,6 +7,7 @@ require('./config/db');
 
 const authRoutes = require('./routes/auth.routes');
 const employeeRoutes = require('./routes/employee.routes');
+const dashboardRoutes = require("./routes/dashboard.routes");
 
 const app = express();
 
@@ -15,6 +16,8 @@ app.use(express.json());
 
 app.use('/auth', authRoutes);
 app.use('/employees', employeeRoutes);
+
+app.use("/dashboard", dashboardRoutes);
 
 app.get('/', (req, res) => {
     res.send('Employee Management API Running');
