@@ -186,36 +186,45 @@ return (
 
   <div className="container">
 
-    <div className="page-header">
+    <div className="employees-header">
 
-      <h1>Employees</h1>
+      <div>
+
+        <h1>Employees</h1>
+
+        <p>
+          Manage employee records,
+          departments and salaries.
+        </p>
+
+      </div>
 
       {user?.role === "admin" && (
 
         <Link
           to="/add-employee"
-          className="btn btn-primary"
+          className="add-employee-btn"
         >
+
           + Add Employee
+
         </Link>
 
       )}
 
     </div>
 
-    <EmployeeFilters
-      searchTerm={searchTerm}
-      setSearchTerm={
-        handleSearchChange
-      }
-      departmentFilter={
-        departmentFilter
-      }
-      setDepartmentFilter={
-        handleDepartmentChange
-      }
-      departments={departments}
-    />
+     <div className="filters-card">
+
+        <EmployeeFilters
+          searchTerm={searchTerm}
+          setSearchTerm={handleSearchChange}
+          departmentFilter={departmentFilter}
+          setDepartmentFilter={handleDepartmentChange}
+          departments={departments}
+        />
+
+      </div>
 
     {loading ? (
 
@@ -228,13 +237,15 @@ return (
     ) : (
 
       <>
-        <EmployeeTable
-          employees={currentEmployees}
-          user={user}
-          onDelete={
-            handleDeleteClick
-          }
-        />
+        <div className="table-card">
+
+          <EmployeeTable
+            employees={currentEmployees}
+            user={user}
+            onDelete={handleDeleteClick}
+          />
+
+        </div>
 
         {totalPages > 1 && (
 

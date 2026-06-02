@@ -1,6 +1,13 @@
 import { Link, useNavigate } from "react-router-dom";
 import { ToastContext } from "../Context/ToastContext";
 import { useContext, useState } from "react";
+import {
+  FiHome,
+  FiUsers,
+  FiBell,
+  FiSettings,
+  FiLogOut
+} from "react-icons/fi";
 
 function Navbar() {
 
@@ -28,101 +35,130 @@ function Navbar() {
   return (
     <nav className="navbar">
 
-      <div className="nav-left">
-        <h2>EMS</h2>
+     <div className="nav-left">
+
+      <div className="logo">
+
+        <div className="logo-icon">
+          EM
+        </div>
+
+        <div className="logo-text">
+
+          <h2>EMS Pro</h2>
+
+          <span>
+            Employee Management
+          </span>
+
+        </div>
+
       </div>
 
-      <div className="nav-center">
+    </div>
 
-        <Link
-          to="/dashboard"
-          className="nav-link"
-        >
-          Dashboard
-        </Link>
+    <div className="nav-center">
 
-      </div>
+      <Link
+        to="/dashboard"
+        className="nav-link"
+      >
+        <FiHome />
+        Dashboard
+      </Link>
+
       <Link
         to="/employees"
         className="nav-link"
-        >
+      >
+        <FiUsers />
         Employees
-        </Link>
+      </Link>
 
-      <div className="nav-right">
+    </div>
 
-        <div className="profile-wrapper">
+    <div className="nav-right">
 
-        <div
-          className="avatar"
+      <button className="icon-btn">
+        <FiBell />
+      </button>
+
+      <button className="icon-btn">
+        <FiSettings />
+      </button>
+
+      <div className="profile-wrapper">
+
+        <button
+          className="profile-trigger"
           onClick={() =>
             setShowMenu(!showMenu)
           }
         >
 
-
-      {user?.username
-        ?.charAt(0)
-        ?.toUpperCase()}
-
-
-        </div>
-
-      {showMenu && (
-
-
-      <div className="profile-menu">
-
-        <div className="profile-header">
-
           <div className="profile-avatar">
 
-            {user?.name
+            {user?.username
               ?.charAt(0)
               ?.toUpperCase()}
 
           </div>
 
-          <div>
+        </button>
 
-            <h4>
-              {user?.name}
-            </h4>
+        {showMenu && (
 
-            <p>
-              {user?.email}
-            </p>
+          <div className="profile-dropdown">
+
+            <div className="dropdown-header">
+
+              <div className="dropdown-avatar">
+
+                {user?.username
+                  ?.charAt(0)
+                  ?.toUpperCase()}
+
+              </div>
+
+              <div>
+
+                <h4>
+                  {user?.username}
+                </h4>
+
+                <p>
+                  {user?.role}
+                </p>
+
+              </div>
+
+            </div>
+            <Link
+              to="/profile"
+              className="profile-menu-link"
+              onClick={() =>
+                setShowMenu(false)
+              }
+            >
+              My Profile
+            </Link>
+
+            <button
+              className="logout-dropdown-btn"
+              onClick={handleLogout}
+            >
+
+              Logout
+
+            </button>
 
           </div>
 
-        </div>
-
-        <div className="role-chip">
-
-          {user?.role === "admin"
-            ? "Administrator"
-            : "Employee"}
-
-        </div>
-
-        <button
-          className="logout-btn"
-          onClick={handleLogout}
-        >
-
-          Logout
-
-        </button>
+        )}
 
       </div>
 
-
-      )}
-
-      </div>
-
-
-      </div>
+    </div>
 
     </nav>
   );

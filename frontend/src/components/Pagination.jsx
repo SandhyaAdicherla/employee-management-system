@@ -4,36 +4,63 @@ function Pagination({
   setCurrentPage
 }) {
 
+  const pages =
+    [...Array(totalPages).keys()];
+
   return (
-    <div className="pagination">
+
+    <div className="pagination-container">
 
       <button
-        className="btn"
+        className="page-btn"
         disabled={currentPage === 1}
         onClick={() =>
-          setCurrentPage(currentPage - 1)
+          setCurrentPage(
+            currentPage - 1
+          )
         }
       >
-        Previous
+        ← Previous
       </button>
 
-      <span>
-        Page {currentPage} of {totalPages}
-      </span>
+      <div className="page-numbers">
+
+        {pages.map((page) => (
+
+          <button
+            key={page}
+            className={
+              currentPage === page + 1
+                ? "page-number active"
+                : "page-number"
+            }
+            onClick={() =>
+              setCurrentPage(page + 1)
+            }
+          >
+            {page + 1}
+          </button>
+
+        ))}
+
+      </div>
 
       <button
-        className="btn"
+        className="page-btn"
         disabled={
           currentPage === totalPages
         }
         onClick={() =>
-          setCurrentPage(currentPage + 1)
+          setCurrentPage(
+            currentPage + 1
+          )
         }
       >
-        Next
+        Next →
       </button>
 
     </div>
+
   );
 }
 

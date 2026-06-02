@@ -20,7 +20,7 @@ function EmployeeFilters({
       />
 
       <select
-        className="filter-select"
+        className="department-select"
         value={departmentFilter}
         onChange={(e) =>
           setDepartmentFilter(e.target.value)

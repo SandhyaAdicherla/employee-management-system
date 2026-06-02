@@ -37,32 +37,66 @@ exports.getEmployeeById = (req, res) => {
 exports.addEmployee = (req, res) => {
 
     const {
+        employee_code,
         name,
         email,
+        designation,
         department,
-        salary
+        manager,
+        salary,
+        joining_date,
+        location,
+        work_mode,
+        status
     } = req.body;
 
-    if (!name || !email || !department || !salary) {
+    if (
+        !employee_code ||
+        !name ||
+        !email ||
+        !designation ||
+        !department ||
+        !salary
+    ) {
 
         return res.status(400).json({
-            message: 'All fields are required'
+            message: 'Required fields are missing'
         });
+
     }
 
     const query = `
         INSERT INTO employees
-        (name,email,department,salary)
-        VALUES(?,?,?,?)
+        (
+            employee_code,
+            name,
+            email,
+            designation,
+            department,
+            manager,
+            salary,
+            joining_date,
+            location,
+            work_mode,
+            status
+        )
+        VALUES (?,?,?,?,?,?,?,?,?,?,?)
     `;
 
     db.query(
         query,
         [
+            employee_code,
             name,
             email,
+            designation,
             department,
-            salary
+            manager,
+            salary,
+            joining_date,
+            location,
+            work_mode,
+            status
         ],
         (err, result) => {
 
@@ -74,8 +108,10 @@ exports.addEmployee = (req, res) => {
                 message: 'Employee Added Successfully',
                 employeeId: result.insertId
             });
+
         }
     );
+
 };
 
 // Update Employee
@@ -84,29 +120,50 @@ exports.updateEmployee = (req, res) => {
     const { id } = req.params;
 
     const {
+        employee_code,
         name,
         email,
+        designation,
         department,
-        salary
+        manager,
+        salary,
+        joining_date,
+        location,
+        work_mode,
+        status
     } = req.body;
 
     const query = `
         UPDATE employees
         SET
+            employee_code=?,
             name=?,
             email=?,
+            designation=?,
             department=?,
-            salary=?
+            manager=?,
+            salary=?,
+            joining_date=?,
+            location=?,
+            work_mode=?,
+            status=?
         WHERE id=?
     `;
 
     db.query(
         query,
         [
+            employee_code,
             name,
             email,
+            designation,
             department,
+            manager,
             salary,
+            joining_date,
+            location,
+            work_mode,
+            status,
             id
         ],
         (err, result) => {
@@ -118,8 +175,10 @@ exports.updateEmployee = (req, res) => {
             res.status(200).json({
                 message: 'Employee Updated Successfully'
             });
+
         }
     );
+
 };
 
 // Delete Employee

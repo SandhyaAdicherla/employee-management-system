@@ -1,4 +1,8 @@
 import { Link } from "react-router-dom";
+import {
+  FiEdit,
+  FiTrash2
+} from "react-icons/fi";
 
 function EmployeeTable({
   employees,
@@ -11,11 +15,11 @@ function EmployeeTable({
 
       <thead>
         <tr>
-          <th>ID</th>
-          <th>Name</th>
-          <th>Email</th>
+          <th>Code</th>
+          <th>Employee</th>
+          <th>Designation</th>
           <th>Department</th>
-          <th>Salary</th>
+          <th>Status</th>
 
           {user?.role === "admin" &&
             <th>Actions</th>}
@@ -28,38 +32,90 @@ function EmployeeTable({
 
           <tr key={employee.id}>
 
-            <td>{employee.id}</td>
             <td>
-            <Link
-              to={`/employees/${employee.id}`}
-              className="employee-link"
-            >
-              {employee.name}
-            </Link>
-          </td>
-            <td>{employee.email}</td>
-            <td>{employee.department}</td>
-            <td>₹ {employee.salary}</td>
+              {employee.employee_code}
+            </td>
+
+            <td>
+
+              <div className="employee-info">
+
+                <div className="employee-avatar">
+                  {employee.name
+                    ?.charAt(0)
+                    ?.toUpperCase()}
+                </div>
+
+                <div className="employee-meta">
+
+                  <Link
+                    to={`/employees/${employee.id}`}
+                    className="employee-link"
+                  >
+                    {employee.name}
+                  </Link>
+
+                  <small>
+                    {employee.email}
+                  </small>
+
+                </div>
+
+              </div>
+
+            </td>
+
+            <td>
+              {employee.designation}
+            </td>
+
+            <td>
+
+              <span className="department-badge">
+                {employee.department}
+              </span>
+
+            </td>
+
+            <td>
+
+              <span
+                className={`status-badge ${
+                  employee.status === "Active"
+                    ? "status-active"
+                    : "status-resigned"
+                }`}
+              >
+                {employee.status}
+              </span>
+
+            </td>
 
             {user?.role === "admin" && (
 
               <td>
 
-                <Link
-                  to={`/edit-employee/${employee.id}`}
-                  className="btn btn-primary"
-                >
-                  Edit
-                </Link>
+                <div className="action-buttons">
 
-                <button
-                  className="btn btn-danger"
-                  onClick={() =>
-                    onDelete(employee.id)
-                  }
-                >
-                  Delete
-                </button>
+                  <Link
+                    to={`/edit-employee/${employee.id}`}
+                    className="action-icon edit-icon"
+                    title="Edit Employee"
+                  >
+                    <FiEdit />
+                  </Link>
+
+                  <button
+                    className="action-icon delete-icon"
+                    onClick={() =>
+                      onDelete(employee.id)
+                    }
+                    title="Delete Employee"
+                  >
+                    <FiTrash2 />
+                  </button>
+
+                </div>
 
               </td>
 

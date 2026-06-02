@@ -86,67 +86,125 @@ return (
 }
 
 return (
-<> <Navbar />
+<>
+  <Navbar />
 
+  <div className="employee-details-container">
 
-  <div className="container">
+    <div className="employee-details-card">
 
-    <div className="card">
+      <Link
+        to="/employees"
+        className="back-link"
+      >
+        ← Back to Employees
+      </Link>
 
-      <div className="page-header">
+      <div className="employee-profile-header">
 
-        <h2>
-          Employee Details
-        </h2>
+        <div className="employee-avatar-large">
+          {employee.name.charAt(0).toUpperCase()}
+        </div>
+
+        <h1>{employee.name}</h1>
+
+        <p>{employee.email}</p>
+
+        <div className="employee-badges">
+
+          <span className="department-badge">
+            {employee.department}
+          </span>
+
+          <span className="work-badge">
+            {employee.work_mode}
+          </span>
+
+        </div>
+
+      </div>
+
+      <div className="employee-info-grid">
+
+        <div className="info-card">
+          <span>Employee Code</span>
+          <h3>{employee.employee_code}</h3>
+        </div>
+
+        <div className="info-card">
+          <span>Designation</span>
+          <h3>{employee.designation}</h3>
+        </div>
+
+        <div className="info-card">
+          <span>Manager</span>
+          <h3>{employee.manager || "-"}</h3>
+        </div>
+
+        <div className="info-card">
+          <span>Salary</span>
+          <h3>
+            ₹{Number(employee.salary).toLocaleString("en-IN")}
+          </h3>
+        </div>
+
+        <div className="info-card">
+          <span>Joining Date</span>
+          <h3>
+            {
+              employee.joining_date
+              ? new Date(
+                  employee.joining_date
+                ).toLocaleDateString("en-IN")
+              : "-"
+            }
+          </h3>
+        </div>
+
+        <div className="info-card">
+          <span>Location</span>
+          <h3>{employee.location || "-"}</h3>
+        </div>
+
+        <div className="info-card">
+          <span>Work Mode</span>
+          <h3>{employee.work_mode || "-"}</h3>
+        </div>
+
+        <div className="info-card">
+          <span>Status</span>
+
+          <div
+            className={`status-badge ${
+              employee.status === "Active"
+                ? "status-active"
+                : "status-resigned"
+            }`}
+          >
+            {employee.status}
+          </div>
+
+        </div>
+
+      </div>
+
+      <div className="profile-actions">
+
+        <Link
+          to={`/edit-employee/${employee.id}`}
+          className="btn-save"
+        >
+          Edit Employee
+        </Link>
 
         <Link
           to="/employees"
-          className="btn"
+          className="btn-cancel"
         >
           Back
         </Link>
 
       </div>
-
-      <div className="details-grid">
-
-        <div className="detail-item">
-          <strong>ID:</strong>
-          <span>{employee.id}</span>
-        </div>
-
-        <div className="detail-item">
-          <strong>Name:</strong>
-          <span>{employee.name}</span>
-        </div>
-
-        <div className="detail-item">
-          <strong>Email:</strong>
-          <span>{employee.email}</span>
-        </div>
-
-        <div className="detail-item">
-          <strong>Department:</strong>
-          <span>
-            {employee.department}
-          </span>
-        </div>
-
-        <div className="detail-item">
-          <strong>Salary:</strong>
-          <span>
-            ₹{employee.salary}
-          </span>
-        </div>
-
-      </div>
-
-      <Link
-        to={`/edit-employee/${employee.id}`}
-        className="btn btn-primary"
-      >
-        Edit Employee
-      </Link>
 
     </div>
 

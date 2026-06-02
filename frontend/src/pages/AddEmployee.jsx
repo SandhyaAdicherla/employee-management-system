@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import api from "../services/api";
 import { ToastContext } from "../Context/ToastContext";
+import EmployeeForm from "../components/EmployeeForm";
 
 function AddEmployee() {
 
@@ -10,21 +11,19 @@ function AddEmployee() {
   const { showToast } =
   useContext(ToastContext);
   const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    department: "",
-    salary: ""
-  });
+  employee_code: "",
+  name: "",
+  email: "",
+  designation: "",
+  department: "",
+  manager: "",
+  salary: "",
+  joining_date: "",
+  location: "",
+  work_mode: "",
+  status: ""
+});
 
-
-  const handleChange = (e) => {
-
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
-
-  };
 
   const handleSubmit = async (e) => {
 
@@ -71,57 +70,28 @@ function AddEmployee() {
 
         <div className="card">
 
-          <h2>Add Employee</h2>
+          <div className="form-header">
 
-          <form onSubmit={handleSubmit}>
+            <div>
 
-            <div className="form-group">
-              <label>Name</label>
-              <input
-                type="text"
-                name="name"
-                className="form-control"
-                onChange={handleChange}
-              />
+              <h2>
+                Add Employee
+              </h2>
+
+              <p>
+                Create a new employee profile
+              </p>
+
             </div>
 
-            <div className="form-group">
-              <label>Email</label>
-              <input
-                type="email"
-                name="email"
-                className="form-control"
-                onChange={handleChange}
-              />
-            </div>
+          </div>
 
-            <div className="form-group">
-              <label>Department</label>
-              <input
-                type="text"
-                name="department"
-                className="form-control"
-                onChange={handleChange}
-              />
-            </div>
-
-            <div className="form-group">
-              <label>Salary</label>
-              <input
-                type="number"
-                name="salary"
-                className="form-control"
-                onChange={handleChange}
-              />
-            </div>
-
-            <button
-              className="btn btn-primary"
-            >
-              Add Employee
-            </button>
-
-          </form>
+           <EmployeeForm
+              formData={formData}
+              setFormData={setFormData}
+              handleSubmit={handleSubmit}
+              buttonText="Add Employee"
+            />
 
         </div>
 
