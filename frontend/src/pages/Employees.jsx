@@ -1,11 +1,10 @@
 import { useContext, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import Navbar from "../components/Navbar";
 import EmployeeFilters from "../components/EmployeeFilters";
 import EmployeeTable from "../components/EmployeeTable";
 import Pagination from "../components/Pagination";
-import ConfirmModal from "../components/ConfirmModal";
 import Loader from "../components/Loader";
 import EmptyState from "../components/EmptyState";
 
@@ -14,13 +13,14 @@ getEmployees,
 deleteEmployee
 } from "../services/employeeService";
 import { ToastContext } from "../Context/ToastContext";
+import CommonModal from "../components/CommonModal";
+import { AuthContext } from "../Context/Authcontext";
 
 function Employees() {
 
 const [employees, setEmployees] = useState([]);
 const [loading, setLoading] = useState(true);
-const { showToast } =
-  useContext(ToastContext);
+const { showToast } =useContext(ToastContext);
 
 const [searchTerm, setSearchTerm] = useState("");
 const [departmentFilter, setDepartmentFilter] = useState("");
@@ -30,22 +30,30 @@ const [currentPage, setCurrentPage] = useState(1);
 const [showDeleteModal, setShowDeleteModal] = useState(false);
 const [selectedEmployeeId, setSelectedEmployeeId] = useState(null);
 
-const user =
-JSON.parse(localStorage.getItem("user"));
+const {user,employeeId} = useContext(AuthContext);
+const navigate = useNavigate();
 
 useEffect(() => {
 fetchEmployees();
-}, []);
+if (
+    user?.role !== "admin" &&
+    user?.role !== "employee"
+  ) {
+    navigate("/dashboard");
+  }
 
+}, []);
 const fetchEmployees = async () => {
 
 
 try {
 
-  const response =
-    await getEmployees();
-
-  setEmployees(response.data);
+  const response = await getEmployees();
+  const filter = response?.data?.filter(
+      employee =>
+      Number(employee.id) !== Number(employeeId)
+    );
+  setEmployees(filter);
 
 } catch (error) {
 
@@ -163,20 +171,13 @@ employees.filter((employee) => {
 
 const employeesPerPage = 5;
 
-const totalPages =
-Math.ceil(
-filteredEmployees.length /
-employeesPerPage
-);
 
-const currentEmployees =
-filteredEmployees.slice(
-(currentPage - 1) *
-employeesPerPage,
+const totalPages = Math.ceil(
+filteredEmployees.length / employeesPerPage);
 
-
-  currentPage *
-  employeesPerPage
+const currentEmployees = filteredEmployees.slice(
+  (currentPage - 1) * employeesPerPage,
+  currentPage * employeesPerPage
 );
 
 
@@ -265,15 +266,19 @@ return (
 
   </div>
 
-  <ConfirmModal
-    show={showDeleteModal}
-    onClose={() =>
-      setShowDeleteModal(false)
-    }
-    onConfirm={
-      handleDeleteConfirm
-    }
-  />
+  {showDeleteModal && <CommonModal
+      title="Delete Employee"
+      onClose={() =>
+      setShowDeleteModal(false)}
+      onSubmit = {handleDeleteConfirm}
+      btnText = "Delete"
+      btnClass = "btn-danger"
+    >
+       <p>
+          Are you sure you want to delete this employee?
+        </p>
+  </CommonModal>
+  }
 
 </>
 

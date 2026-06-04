@@ -1,15 +1,16 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import api from "../services/api";
 import { ToastContext } from "../Context/ToastContext";
 import EmployeeForm from "../components/EmployeeForm";
+import { AuthContext } from "../Context/Authcontext";
 
 function AddEmployee() {
 
   const navigate = useNavigate();
-  const { showToast } =
-  useContext(ToastContext);
+  const { showToast } = useContext(ToastContext);
+  const {user,employeeId} = useContext(AuthContext);
   const [formData, setFormData] = useState({
   employee_code: "",
   name: "",
@@ -61,6 +62,13 @@ function AddEmployee() {
 
     }
   };
+  useEffect(() => {
+
+    if (user?.role !== "admin") {
+      navigate("/dashboard");
+    }
+
+  }, []);
 
   return (
     <>

@@ -4,13 +4,14 @@ import Navbar from "../components/Navbar";
 import api from "../services/api";
 import { ToastContext } from "../Context/ToastContext";
 import EmployeeForm from "../components/EmployeeForm";
+import { AuthContext } from "../Context/Authcontext";
 
 function EditEmployee() {
 
   const { id } = useParams();
   const navigate = useNavigate();
-  const { showToast } =
-  useContext(ToastContext);
+  const { showToast } = useContext(ToastContext);
+  const {user,employeeId} = useContext(AuthContext);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -22,6 +23,14 @@ function EditEmployee() {
 
   useEffect(() => {
     getEmployee();
+   const isAdmin = user?.role === "admin";
+
+  const isOwnProfile = user?.role === "employee" &&
+    Number(id) === Number(employeeId);
+
+  if (!isAdmin && !isOwnProfile) {
+    navigate("/dashboard");
+  }
   }, []);
 
   const getEmployee = async () => {

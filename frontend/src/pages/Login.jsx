@@ -1,28 +1,24 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../services/api";
+import { AuthContext } from "../Context/Authcontext";
+import { getEmployees } from "../services/employeeService";
 
 function Login() {
 
   const navigate = useNavigate();
-
-  const [formData, setFormData] = useState({
-    email: "",
-    password: ""
-  });
-
+  const {setUser,setEmployeeId} = useContext(AuthContext);
+  const [formData, setFormData] = useState({ email: "",password: ""});
   const [errors, setErrors] = useState({});
   const [apiError, setApiError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
-
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
     });
-
     setErrors({
       ...errors,
       [e.target.name]: ""
@@ -70,10 +66,23 @@ function Login() {
         response.data.token
       );
 
-      localStorage.setItem(
-        "user",
-        JSON.stringify(response.data.user)
-      );
+      const loggedUser = response.data.user;
+        localStorage.setItem( "user",
+          JSON.stringify(loggedUser)
+        );
+
+        setUser(loggedUser);
+      console.log("loged in user",loggedUser);
+      const employeeResponse = await getEmployees();
+      const employee = employeeResponse.data.find(emp =>
+        emp.email ===loggedUser.email);
+      console.log("employees",employeeResponse)
+      if (employee) {
+        console.log("itemset",employee.id)
+        localStorage.setItem("employeeId",employee.id);
+
+        setEmployeeId(employee.id);
+      }
 
       setSuccess(
         "Login Successful! Redirecting..."
@@ -99,8 +108,7 @@ function Login() {
   };
 
   useEffect(() => {
-    const token =
-        localStorage.getItem("token");
+    const token = localStorage.getItem("token");
 
     if (token) {
         navigate("/dashboard");
@@ -109,19 +117,32 @@ function Login() {
     }, []);
 
   return (
-    <div className="auth-container">
+  <div className="auth-container">
 
-      <div
-        className="card"
-        style={{ width: "400px" }}
-      >
+    <div className="auth-layout">
 
-        <h2 className="page-title text-center">
-          Employee Management
-        </h2>
+      <div className="auth-info">
+
+        <span className="auth-badge">
+          Employee Management System
+        </span>
+
+        <h1>
+          EMS Pro
+        </h1>
+
+        <p>
+          Manage employees,
+          departments and analytics
+          from a single dashboard.
+        </p>
+
+      </div>
+
+      <div className="auth-card">
 
         <h3 className="text-center mb-20">
-          Login
+          Sign in
         </h3>
 
         {apiError && (
@@ -141,7 +162,7 @@ function Login() {
 
         <form onSubmit={handleSubmit}>
 
-          <div className="form-group">
+          <div className="form-group mb-15">
 
             <label>Email</label>
 
@@ -161,7 +182,7 @@ function Login() {
 
           </div>
 
-          <div className="form-group">
+          <div className="form-group mb-15">
 
             <label>Password</label>
 
@@ -183,12 +204,10 @@ function Login() {
 
           <button
             type="submit"
-            className="btn btn-primary full-width"
+            className="btn-save full-width"
             disabled={loading}
           >
-            {loading
-              ? "Logging In..."
-              : "Login"}
+            {loading ? "Logging In..." : "Login"}
           </button>
 
         </form>
@@ -204,7 +223,7 @@ function Login() {
           </div>
 
           <p>
-            Email: admin@gmail.com
+            Email: sarah.johnson@gmail.com
           </p>
 
           <p>
@@ -220,11 +239,11 @@ function Login() {
           </div>
 
           <p>
-            Email: employee@gmail.com
+            Email: sneha.reddy@gmail.com
           </p>
 
           <p>
-            Password: employee123
+            Password: sarah@987
           </p>
 
         </div>
@@ -244,6 +263,7 @@ function Login() {
 
         </p>
 
+      </div>
       </div>
 
     </div>

@@ -3,7 +3,7 @@ import {
   FiEdit,
   FiTrash2
 } from "react-icons/fi";
-
+import { getInitials } from "../utils/Avatar.util";
 function EmployeeTable({
   employees,
   user,
@@ -41,9 +41,7 @@ function EmployeeTable({
               <div className="employee-info">
 
                 <div className="employee-avatar">
-                  {employee.name
-                    ?.charAt(0)
-                    ?.toUpperCase()}
+                  {getInitials(employee.name)}
                 </div>
 
                 <div className="employee-meta">

@@ -6,24 +6,39 @@ import {
   FiUsers,
   FiBell,
   FiSettings,
-  FiLogOut
+  FiLogOut,
+  FiUserPlus,
+  FiEdit,
+  FiTrash2,
+  FiLock,
+  FiUser
 } from "react-icons/fi";
+import api from "../services/api";
+import { useEffect } from "react";
+import { AuthContext } from "../Context/Authcontext";
+import { getInitials } from "../utils/Avatar.util";
+import ChangePasswordModal from "./ChangePasswordModal";
+import UserProfileModal from "./UserProfileModal";
 
 function Navbar() {
 
   const navigate = useNavigate();
-  const { showToast } =
-  useContext(ToastContext);
+  const { showToast } = useContext(ToastContext);
   const [showMenu, setShowMenu] =useState(false);
-
-  const user = JSON.parse(
-    localStorage.getItem("user")
-  );
+  const [showNotifications,setShowNotifications] = useState(false);
+  const [unreadCount,setUnreadCount] = useState(0);
+  const [notifications,setNotifications] = useState([]);
+  const [showProfileModal,setShowProfileModal] = useState(false);
+  const [showPasswordModal,setShowPasswordModal] = useState(false);
+  const {user,employeeId,setEmployeeId,setUser} = useContext(AuthContext);
 
   const handleLogout = () => {
 
     localStorage.removeItem("token");
     localStorage.removeItem("user");
+    localStorage.removeItem("employeeId");
+    setEmployeeId(null);
+    setUser(null)
     showToast(
       "Logged Out Successfully",
       "success"
@@ -32,6 +47,81 @@ function Navbar() {
 
   };
 
+  useEffect(() => {
+    getNotifications();
+  }, []);
+
+  const getNotifications = async () => {
+    try {
+
+      const token =
+        localStorage.getItem(
+          "token"
+        );
+
+      const response =
+        await api.get(
+          "/activity-logs",
+          {
+            headers: {
+              Authorization:
+              `Bearer ${token}`
+            }
+          }
+        );
+
+      setNotifications(
+        response.data
+      );
+      const lastSeenId =
+      Number(
+        localStorage.getItem(
+          "lastSeenNotificationId"
+        )
+      ) || 0;
+
+    const unread = response.data.filter(
+        item => item.id > lastSeenId).length;
+
+    setUnreadCount(unread);
+
+    } catch (error) {
+
+      console.log(error);
+
+    }
+
+  };
+  const handleNotificationClick = () => {
+
+  setShowNotifications(!showNotifications );
+  setShowMenu(false);
+
+  if (
+    notifications.length > 0
+  ) {
+
+    localStorage.setItem("lastSeenNotificationId",notifications[0].id);
+  
+    setUnreadCount(0);
+
+  }
+
+};
+const handleMyProfile = () => {
+  console.log(employeeId);
+
+  if (employeeId) {
+    navigate(
+      `/employees/${employeeId}`
+    );
+    return;
+  }
+    setShowMenu(false);
+    setShowNotifications(false );
+    setShowProfileModal(true);
+
+};
   return (
     <nav className="navbar">
 
@@ -67,40 +157,128 @@ function Navbar() {
         Dashboard
       </Link>
 
-      <Link
-        to="/employees"
-        className="nav-link"
-      >
-        <FiUsers />
-        Employees
-      </Link>
+     {(
+        user?.role === "admin" ||
+        user?.role === "employee"
+      ) && (
+        <Link
+          to="/employees"
+          className="nav-link"
+        >
+          <FiUsers />
+          Employees
+        </Link>
+      )}
 
     </div>
 
     <div className="nav-right">
 
-      <button className="icon-btn">
+      <div className="nav-dropdown-wrapper">
+
+      <button
+        className="icon-btn notification-btn"
+        onClick={handleNotificationClick}
+      >
+
         <FiBell />
+
+        {unreadCount > 0 && (
+
+          <span
+            className="notification-count"
+          >
+            {unreadCount}
+          </span>
+
+        )}
+
       </button>
 
-      <button className="icon-btn">
-        <FiSettings />
-      </button>
+      {showNotifications && (
+
+        <div className="notification-dropdown">
+
+          <div className="dropdown-title">
+            Notifications
+          </div>
+
+          {notifications.length > 0 ? (
+
+            notifications.map(item => (
+
+              <div
+                key={item.id}
+                className="notification-item"
+              >
+
+                <div
+                  className="notification-icon"
+                >
+
+                  {item.action ===
+                    "CREATE" ? (
+                    <FiUserPlus />
+                  ) : item.action ===
+                    "UPDATE" ? (
+                    <FiEdit />
+                  ) : (
+                    <FiTrash2 />
+                  )}
+
+                </div>
+
+                <div>
+
+                  <h5>
+                    {item.description}
+                  </h5>
+
+                  <small>
+
+                    {new Date(
+                      item.created_at
+                    ).toLocaleString(
+                      "en-IN"
+                    )}
+
+                  </small>
+
+                </div>
+
+              </div>
+
+            ))
+
+          ) : (
+
+            <div
+              className="empty-notifications"
+            >
+              No notifications found
+            </div>
+
+          )}
+
+        </div>
+
+      )}
+
+    </div>
 
       <div className="profile-wrapper">
 
         <button
           className="profile-trigger"
-          onClick={() =>
+          onClick={() => {
+            setShowNotifications(false)
             setShowMenu(!showMenu)
+          }
           }
         >
 
           <div className="profile-avatar">
-
-            {user?.username
-              ?.charAt(0)
-              ?.toUpperCase()}
+            {getInitials(user?.username)}
 
           </div>
 
@@ -113,10 +291,7 @@ function Navbar() {
             <div className="dropdown-header">
 
               <div className="dropdown-avatar">
-
-                {user?.username
-                  ?.charAt(0)
-                  ?.toUpperCase()}
+                {getInitials(user?.username)}
 
               </div>
 
@@ -133,23 +308,31 @@ function Navbar() {
               </div>
 
             </div>
-            <Link
-              to="/profile"
-              className="profile-menu-link"
-              onClick={() =>
-                setShowMenu(false)
-              }
+            <button
+              className="dropdown-item"
+              onClick={handleMyProfile}
             >
+              <FiUser />
               My Profile
-            </Link>
+            </button>
+
+            <button
+              className="dropdown-item"
+              onClick={() => {
+                setShowMenu(false)
+                setShowPasswordModal(true)
+              }
+            }
+            >
+              <FiLock />
+              Change Password
+            </button>
 
             <button
               className="logout-dropdown-btn"
               onClick={handleLogout}
             >
-
               Logout
-
             </button>
 
           </div>
@@ -159,6 +342,30 @@ function Navbar() {
       </div>
 
     </div>
+     {
+        showProfileModal && (
+
+        <UserProfileModal
+          user={user}
+          onClose={() =>
+            setShowProfileModal(false)
+          }
+        />
+
+        )
+        }
+
+        {
+        showPasswordModal && (
+
+        <ChangePasswordModal
+          onClose={() =>
+            setShowPasswordModal(false)
+          }
+        />
+
+        )
+        }
 
     </nav>
   );

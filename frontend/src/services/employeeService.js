@@ -18,3 +18,16 @@ export const deleteEmployee = async (id) => {
     }
   );
 };
+export const changePassword = async (
+    data
+) => {
+
+    return await api.put(
+        "/auth/change-password",
+        data,
+        {
+           headers: getHeaders()
+        }
+    );
+
+};

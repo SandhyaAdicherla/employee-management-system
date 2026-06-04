@@ -1,4 +1,5 @@
 const db = require('../config/db');
+const addActivityLog = require("../utils/activityLogger");
 
 // Get All Employees
 exports.getEmployees = (req, res) => {
@@ -49,7 +50,11 @@ exports.addEmployee = (req, res) => {
         work_mode,
         status
     } = req.body;
-
+   const formattedDate =
+  joining_date
+    ? joining_date
+        .split("T")[0]
+    : null;
     if (
         !employee_code ||
         !name ||
@@ -58,7 +63,7 @@ exports.addEmployee = (req, res) => {
         !department ||
         !salary
     ) {
-
+        
         return res.status(400).json({
             message: 'Required fields are missing'
         });
@@ -93,7 +98,7 @@ exports.addEmployee = (req, res) => {
             department,
             manager,
             salary,
-            joining_date,
+            formattedDate,
             location,
             work_mode,
             status
@@ -103,7 +108,7 @@ exports.addEmployee = (req, res) => {
             if (err) {
                 return res.status(500).json(err);
             }
-
+            addActivityLog("CREATE",`Employee ${name} added`);
             res.status(201).json({
                 message: 'Employee Added Successfully',
                 employeeId: result.insertId
@@ -132,7 +137,23 @@ exports.updateEmployee = (req, res) => {
         work_mode,
         status
     } = req.body;
+    if (req.body.role === "employee") {
 
+        if (
+            req.body.employeeId != req.params.id
+        ) {
+            return res.status(403).json({
+            message:
+            "You can edit only your profile"
+            });
+        }
+
+    }
+    const formattedDate =
+  joining_date
+    ? joining_date
+        .split("T")[0]
+    : null;
     const query = `
         UPDATE employees
         SET
@@ -160,7 +181,7 @@ exports.updateEmployee = (req, res) => {
             department,
             manager,
             salary,
-            joining_date,
+            formattedDate,
             location,
             work_mode,
             status,
@@ -172,6 +193,7 @@ exports.updateEmployee = (req, res) => {
                 return res.status(500).json(err);
             }
 
+            addActivityLog("UPDATE",`Employee ${name} updated`);
             res.status(200).json({
                 message: 'Employee Updated Successfully'
             });
@@ -186,17 +208,66 @@ exports.deleteEmployee = (req, res) => {
 
     const { id } = req.params;
 
-    const query =
-        'DELETE FROM employees WHERE id=?';
+    const getEmployeeQuery =
+    `
+    SELECT name
+    FROM employees
+    WHERE id = ?
+    `;
 
-    db.query(query, [id], (err, result) => {
+    db.query(
+        getEmployeeQuery,
+        [id],
+        (err, employeeResult) => {
 
-        if (err) {
-            return res.status(500).json(err);
+            if (err) {
+                return res
+                .status(500)
+                .json(err);
+            }
+
+            if (
+                employeeResult.length === 0
+            ) {
+                return res
+                .status(404)
+                .json({
+                    message:
+                    "Employee not found"
+                });
+            }
+
+            const employeeName =
+            employeeResult[0].name;
+
+            const deleteQuery =
+            `
+            DELETE FROM employees
+            WHERE id = ?
+            `;
+
+            db.query(
+                deleteQuery,
+                [id],
+                (err, result) => {
+
+                    if (err) {
+                        return res
+                        .status(500)
+                        .json(err);
+                    }
+
+                    addActivityLog("DELETE",`Employee ${employeeName} deleted`);
+
+                    res.status(200).json({
+                        message:
+                        "Employee Deleted Successfully"
+                    });
+
+                }
+            );
+
         }
+    );
 
-        res.status(200).json({
-            message: 'Employee Deleted Successfully'
-        });
-    });
 };

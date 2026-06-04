@@ -1,305 +1,224 @@
-import { useEffect, useState } from "react";
-import Navbar from "../components/Navbar";
-import api from "../services/api";
+import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+
+import Navbar from "../components/Navbar";
+import AnalyticsCharts from "../components/AnalyticsCharts";
+import api from "../services/api";
+import { FiUserPlus } from "react-icons/fi";
+import { AuthContext } from "../Context/Authcontext";
+import { getInitials } from "../utils/Avatar.util";
 
 function Dashboard() {
 
-const [stats, setStats] = useState({});
-const [employees, setEmployees] = useState([]);
+  const [employees, setEmployees] = useState([]);
 
-const user =
-JSON.parse(
-localStorage.getItem("user")
-);
+  const {user,employeeId} = useContext(AuthContext);
 
-useEffect(() => {
+  useEffect(() => {
 
+    getEmployees();
 
-getStats();
-getEmployees();
+  }, []);
 
+  const getEmployees = async () => {
 
-}, []);
+    try {
 
-const getStats = async () => {
+      const token =
+        localStorage.getItem("token");
 
+      const response = await api.get(
+        "/employees",
+        {
+          headers: {
+            Authorization:
+              `Bearer ${token}`
+          }
+        }
+      );
 
-try {
+      setEmployees(response.data);
 
-  const token =
-    localStorage.getItem("token");
+    } catch (error) {
 
-  const response = await api.get(
-    "/dashboard/stats",
-    {
-      headers: {
-        Authorization:
-          `Bearer ${token}`
-      }
+      console.log(error);
+
     }
-  );
 
-  setStats(response.data);
+  };
+  const recentEmployees = [...employees].filter(
+      employee =>
+        employee.email !== user?.email
+    )
+    .sort((a, b) =>
+        new Date(b.joining_date) -new Date(a.joining_date)
+    );
+  const displayedEmployees = recentEmployees .length <= 3
+    ? recentEmployees : recentEmployees.slice(0, 4);
+ return (
+  <>
+    <Navbar />
 
-} catch (error) {
+    <div className="container">
 
-  console.log(error);
+      <div className="welcome-card">
 
-}
+        <div className="welcome-content">
 
+          <span className="welcome-badge">
+            Employee Management System
+          </span>
 
-};
+          <h1>
+            Welcome back,
+            {" "}
+            {user?.username}
+            {" "}
+            👋
+          </h1>
 
-const getEmployees = async () => {
-
-
-try {
-
-  const token =
-    localStorage.getItem("token");
-
-  const response = await api.get(
-    "/employees",
-    {
-      headers: {
-        Authorization:
-          `Bearer ${token}`
-      }
-    }
-  );
-
-  setEmployees(response.data);
-
-} catch (error) {
-
-  console.log(error);
-
-}
-
-
-};
-
-const activeEmployees =
-employees.filter(
-employee =>
-employee.status === "Active"
-).length;
-
-const remoteEmployees =
-employees.filter(
-employee =>
-employee.work_mode === "Remote"
-).length;
-
-const totalDepartments =
-new Set(
-employees.map(
-employee =>
-employee.department
-)
-).size;
-
-return (
-<> <Navbar />
-
-
-  <div className="container">
-
-    <div className="welcome-card">
-
-      <div className="welcome-content">
-
-        <span className="welcome-badge">
-          Employee Management System
-        </span>
-
-        <h1>
-          Welcome back,
-          {" "}
-          {user?.username}
-          {" "}
-          👋
-        </h1>
-
-        <p>
-          Manage employees,
-          departments, users and
-          company operations from
-          a single dashboard.
-        </p>
-
-      </div>
-
-    </div>
-
-    <div className="dashboard-grid">
-
-      <div className="dashboard-card">
-
-        <div className="card-top">
-
-          <div className="card-icon employees-icon">
-            👥
-          </div>
+          <p>
+            Manage employees,
+            departments and company
+            operations from a single
+            dashboard.
+          </p>
 
         </div>
 
-        <h2>
-          {employees.length}
-        </h2>
-
-        <span>
-          Total Employees
-        </span>
-
       </div>
 
-      <div className="dashboard-card">
+      {employees.length > 0 && (
 
-        <div className="card-top">
+        <AnalyticsCharts
+          employees={employees}
+        />
 
-          <div className="card-icon admins-icon">
-            ✅
+      )}
+
+      <div className="dashboard-bottom">
+
+        <div className="dashboard-section">
+
+          <div className="section-header">
+
+            <h2>
+              Recently Joined Employees
+            </h2>
+            {employees.length > 1 &&
+            <Link
+              to="/employees"
+              className="view-all-link"
+            >
+              View All
+            </Link>}
+
           </div>
 
-        </div>
+          {employees.length > 0 ? (
 
-        <h2>
-          {activeEmployees}
-        </h2>
+            <>
+              <div className="recent-employees">
 
-        <span>
-          Active Employees
-        </span>
+                {displayedEmployees.map(
+                  employee => (
 
-      </div>
+                    <div
+                      key={employee.id}
+                      className="recent-employee-card"
+                    >
 
-      <div className="dashboard-card">
+                      <div className="employee-avatar">
+                        {getInitials(employee.name)}
+                      </div>
 
-        <div className="card-top">
+                      <div className="employee-content">
 
-          <div className="card-icon users-icon">
-            🏢
-          </div>
+                        <h4>
+                          {employee.name}
+                        </h4>
 
-        </div>
+                        <small>
+                          {employee.designation}
+                        </small>
 
-        <h2>
-          {totalDepartments}
-        </h2>
+                      </div>
 
-        <span>
-          Departments
-        </span>
+                      <Link
+                        to={`/employees/${employee.id}`}
+                        className="employee-view-btn"
+                      >
+                        View
+                      </Link>
 
-      </div>
+                    </div>
 
-      <div className="dashboard-card">
+                  )
+                )}
 
-        <div className="card-top">
+              </div>
 
-          <div className="card-icon departments-icon">
-            💻
-          </div>
+            </>
 
-        </div>
+          ) : (
 
-        <h2>
-          {remoteEmployees}
-        </h2>
+            <div className="empty-state">
 
-        <span>
-          Remote Employees
-        </span>
+              <h3>
+                No Employees Found
+              </h3>
 
-      </div>
+              <p>
+                Start by adding your
+                first employee.
+              </p>
 
-    </div>
-
-    <div className="dashboard-section">
-
-      <h2>
-        Recent Employees
-      </h2>
-
-      <div className="recent-employees">
-
-        {employees
-          .slice(-5)
-          .reverse()
-          .map(employee => (
-
-          <div
-            key={employee.id}
-            className="recent-employee-card"
-          >
-
-            <div className="employee-avatar">
-
-              {employee.name
-                ?.charAt(0)
-                ?.toUpperCase()}
+              <Link
+                to="/add-employee"
+                className="btn-save"
+              >
+                Add Employee
+              </Link>
 
             </div>
 
-            <div>
+          )}
 
-              <h4>
-                {employee.name}
-              </h4>
+        </div>
+        {user?.role === "admin" && (
 
-              <small>
-                {employee.designation}
-              </small>
+          <div className="dashboard-section">
+
+            <h2>
+              Quick Actions
+            </h2>
+
+            <div className="quick-action-card">
+
+              <Link
+                to="/add-employee"
+                className="action-card"
+              >
+                <FiUserPlus />
+
+                <h4>Add Employee</h4>
+
+                <p>
+                  Create employee records
+                </p>
+              </Link>
 
             </div>
 
           </div>
 
-        ))}
-
-      </div>
-
-    </div>
-    <div className="dashboard-section">
-
-      <h2>Quick Actions</h2>
-
-      <div className="quick-actions">
-
-        <Link
-          to="/add-employee"
-          className="quick-action-card"
-        >
-          <span>➕</span>
-          <h4>Add Employee</h4>
-        </Link>
-
-        <Link
-          to="/employees"
-          className="quick-action-card"
-        >
-          <span>👥</span>
-          <h4>View Employees</h4>
-        </Link>
-
-        <Link
-          to="/profile"
-          className="quick-action-card"
-        >
-          <span>👤</span>
-          <h4>My Profile</h4>
-        </Link>
+        )}
 
       </div>
 
     </div>
 
-  </div>
-</>
-
-
+  </>
 );
 }
 

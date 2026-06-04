@@ -74,7 +74,7 @@ const onFormSubmit = (e) => {
     return;
   }
 
-  handleSubmit();
+  handleSubmit(e);
 
 };
 return (

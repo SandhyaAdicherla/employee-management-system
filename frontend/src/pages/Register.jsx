@@ -128,129 +128,141 @@ function Register() {
     
   return (
     <div className="auth-container">
+      <div className="auth-layout">
 
-      <div
-        className="card"
-        style={{ width: "400px" }}
-      >
+        <div className="auth-info">
 
-        <h2 className="page-title text-center">
-          Employee Management
-        </h2>
+          <span className="auth-badge">
+            Employee Management System
+          </span>
 
-        <h3 className="text-center mb-20">
-          Register
-        </h3>
+          <h1>
+            EMS Pro
+          </h1>
 
-        {apiError && (
-          <div className="error-box">
-            {apiError}
-          </div>
-        )}
+          <p>
+            Create an account and start
+            managing employees with ease.
+          </p>
 
-        {success && (
-          <div className="success-box">
+        </div>
 
-            <div className="success-icon">
-              ✓
+        <div className="auth-card">
+
+          <h3 className="text-center mb-20">
+            Register
+          </h3>
+
+          {apiError && (
+            <div className="error-box">
+              {apiError}
+            </div>
+          )}
+
+          {success && (
+            <div className="success-box">
+
+              <div className="success-icon">
+                ✓
+              </div>
+
+              <p>{success}</p>
+
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit}>
+
+            <div className="form-group mb-15">
+
+              <label>Username</label>
+
+              <input
+                type="text"
+                name="username"
+                value={formData.username}
+                onChange={handleChange}
+                className="form-control"
+              />
+
+              {errors.username && (
+                <small className="field-error">
+                  {errors.username}
+                </small>
+              )}
+
             </div>
 
-            <p>{success}</p>
+            <div className="form-group mb-15">
 
-          </div>
-        )}
+              <label>Email</label>
 
-        <form onSubmit={handleSubmit}>
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                className="form-control"
+              />
 
-          <div className="form-group">
+              {errors.email && (
+                <small className="field-error">
+                  {errors.email}
+                </small>
+              )}
 
-            <label>Username</label>
+            </div>
 
-            <input
-              type="text"
-              name="username"
-              value={formData.username}
-              onChange={handleChange}
-              className="form-control"
-            />
+            <div className="form-group mb-15">
 
-            {errors.username && (
-              <small className="field-error">
-                {errors.username}
-              </small>
-            )}
+              <label>Password</label>
 
-          </div>
+              <input
+                type="password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                className="form-control"
+              />
 
-          <div className="form-group">
+              {errors.password && (
+                <small className="field-error">
+                  {errors.password}
+                </small>
+              )}
 
-            <label>Email</label>
+            </div>
 
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              className="form-control"
-            />
+            <button
+              type="submit"
+              className="btn-save full-width"
+              disabled={loading}
+            >
+              {
+                loading
+                  ? "Registering..."
+                  : "Register"
+              }
+            </button>
 
-            {errors.email && (
-              <small className="field-error">
-                {errors.email}
-              </small>
-            )}
+          </form>
 
-          </div>
+          <p className="mt-20 text-center">
 
-          <div className="form-group">
+            Already have an account?{" "}
 
-            <label>Password</label>
+            <Link
+              to="/login"
+              className="link"
+            >
+              Login
+            </Link>
 
-            <input
-              type="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              className="form-control"
-            />
+          </p>
 
-            {errors.password && (
-              <small className="field-error">
-                {errors.password}
-              </small>
-            )}
-
-          </div>
-
-          <button
-            type="submit"
-            className="btn btn-primary full-width"
-            disabled={loading}
-          >
-            {
-              loading
-                ? "Registering..."
-                : "Register"
-            }
-          </button>
-
-        </form>
-
-        <p className="mt-20 text-center">
-
-          Already have an account?{" "}
-
-          <Link
-            to="/login"
-            className="link"
-          >
-            Login
-          </Link>
-
-        </p>
+        </div>
 
       </div>
-
     </div>
   );
 }

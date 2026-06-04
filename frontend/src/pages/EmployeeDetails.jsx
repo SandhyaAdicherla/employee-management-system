@@ -1,30 +1,35 @@
-import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useContext, useEffect, useState } from "react";
+import { useParams, Link, useNavigate } from "react-router-dom";
 
 import Navbar from "../components/Navbar";
 import Loader from "../components/Loader";
 import api from "../services/api";
+import { AuthContext } from "../Context/Authcontext";
+import { getInitials } from "../utils/Avatar.util";
 
 function EmployeeDetails() {
 
 const { id } = useParams();
+const nagivate = useNavigate();
 
-const [employee, setEmployee] =
-useState(null);
-
-const [loading, setLoading] =
-useState(true);
+const [employee, setEmployee] = useState(null);
+const {user,employeeId} = useContext(AuthContext);
+const [loading, setLoading] = useState(true);
 
 useEffect(() => {
 
-
 fetchEmployee();
-
+if (
+    user?.role !== "admin" &&
+    user?.role !== "employee"
+  ) {
+    navigate("/dashboard");
+    return;
+  }
 
 }, []);
 
 const fetchEmployee = async () => {
-
 
 try {
 
@@ -103,7 +108,7 @@ return (
       <div className="employee-profile-header">
 
         <div className="employee-avatar-large">
-          {employee.name.charAt(0).toUpperCase()}
+          {getInitials(employee.name)}
         </div>
 
         <h1>{employee.name}</h1>
@@ -114,10 +119,6 @@ return (
 
           <span className="department-badge">
             {employee.department}
-          </span>
-
-          <span className="work-badge">
-            {employee.work_mode}
           </span>
 
         </div>
@@ -190,12 +191,22 @@ return (
 
       <div className="profile-actions">
 
-        <Link
-          to={`/edit-employee/${employee.id}`}
-          className="btn-save"
-        >
-          Edit Employee
-        </Link>
+        {(
+          user?.role === "admin" ||
+          (
+            user?.role === "employee" &&
+            employee?.id === employeeId
+          )
+        ) && (
+
+          <Link
+            to={`/edit-employee/${employee.id}`}
+            className="btn-save"
+          >
+            Edit Profile
+          </Link>
+
+        )}
 
         <Link
           to="/employees"
