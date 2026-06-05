@@ -60,5 +60,6 @@
 }
 .modal-note{
     font-size: 12px;
-    color:var(--text-light);
+    color: var(--text) !important;
+    margin-bottom: 20px;
 }

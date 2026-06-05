@@ -108,7 +108,7 @@ function ChangePasswordModal({
       btnClass = "btn-save"
     >
       <p className="modal-note">Choose a strong password containing letters, numbers and special characters.</p>
-      <div className="form-group">
+      <div className="form-group mb-15">
 
         <label>
           Current Password
@@ -134,7 +134,7 @@ function ChangePasswordModal({
 
       </div>
 
-      <div className="form-group">
+      <div className="form-group mb-15">
 
         <label>
           New Password
@@ -160,7 +160,7 @@ function ChangePasswordModal({
 
       </div>
 
-      <div className="form-group">
+      <div className="form-group mb-15">
 
         <label>
           Confirm Password
