@@ -48,6 +48,7 @@ function AddEmployee() {
          response.data.message,
           "success"
         );
+        window.dispatchEvent( new Event("notificationUpdate"));
       setTimeout(() => {
         navigate("/employees");
       }, 1500);

@@ -90,6 +90,7 @@ try {
     "Employee Deleted Successfully",
     "success"
   );
+  window.dispatchEvent( new Event("notificationUpdate"));
   fetchEmployees();
 
 } catch (error) {
@@ -275,8 +276,8 @@ return (
       btnText = "Delete"
       btnClass = "btn-danger"
     >
-       <p>
-          This action cannot be undone.The employee record will be permanently removed.
+       <p className="modal-note">
+          The employee record will be permanently removed.
           Are you sure you want to delete this employee?
         </p>
   </CommonModal>

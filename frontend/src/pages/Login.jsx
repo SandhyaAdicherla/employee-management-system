@@ -244,11 +244,11 @@ function Login() {
           </div>
 
           <p>
-            Email: sarah.johnson@gmail.com
+            Email: admin@emsdemo.com
           </p>
 
           <p>
-            Password: sarah@987
+            Password: Demo@123
           </p>
 
         </div>
@@ -260,11 +260,11 @@ function Login() {
           </div>
 
           <p>
-            Email: sneha.reddy@gmail.com
+            Email: employee@emsdemo.com
           </p>
 
           <p>
-            Password: sneha123
+            Password: Demo@123
           </p>
 
         </div>

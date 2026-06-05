@@ -195,7 +195,7 @@ return (
           user?.role === "admin" ||
           (
             user?.role === "employee" &&
-            employee?.id === employeeId
+            Number(employee?.id) === Number(employeeId)
           )
         ) && (
 

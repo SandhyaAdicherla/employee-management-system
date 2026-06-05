@@ -115,7 +115,11 @@ function Dashboard() {
 
       )}
 
-      <div className="dashboard-bottom">
+      <div className={`dashboard-bottom ${
+          user?.role === "admin"
+            ? ""
+            : "employee-view"
+        }`}>
 
         <div className="dashboard-section">
 

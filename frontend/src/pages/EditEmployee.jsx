@@ -48,7 +48,14 @@ function EditEmployee() {
           }
         }
       );
-      setFormData(response.data[0]);
+      const employee = response.data[0];
+
+      setFormData({
+        ...employee,
+        joining_date: employee.joining_date
+          ? employee.joining_date.split("T")[0]
+          : ""
+      });
 
     } catch (error) {
 
@@ -79,6 +86,7 @@ function EditEmployee() {
        response.data.message,
         "success"
       );
+      window.dispatchEvent( new Event("notificationUpdate"));
       setTimeout(() => {
         navigate("/employees");
       }, 1500);

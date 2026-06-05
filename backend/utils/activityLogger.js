@@ -10,7 +10,7 @@ const cleanOldLogs = () => {
         SELECT id
         FROM activity_logs
         ORDER BY id DESC
-        LIMIT 100
+        LIMIT 50
       ) temp
     )
   `);

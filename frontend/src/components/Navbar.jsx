@@ -50,7 +50,31 @@ function Navbar() {
   };
 
   useEffect(() => {
-    getNotifications();
+
+    if (user) {
+      getNotifications();
+    }
+
+  }, [user]);
+
+  useEffect(() => {
+
+    const refreshNotifications = () => {
+      getNotifications();
+    };
+
+    window.addEventListener(
+      "notificationUpdate",
+      refreshNotifications
+    );
+
+    return () => {
+      window.removeEventListener(
+        "notificationUpdate",
+        refreshNotifications
+      );
+    };
+
   }, []);
 
   const getNotifications = async () => {
@@ -239,6 +263,7 @@ useEffect(() => {
           <div className="dropdown-title">
             Notifications
           </div>
+          <div className="notification-overflow">
 
           {notifications.length > 0 ? (
 
@@ -296,6 +321,7 @@ useEffect(() => {
             </div>
 
           )}
+          </div>
 
         </div>
 

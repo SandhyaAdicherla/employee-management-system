@@ -161,11 +161,17 @@
   top:50px;
   right:0;
   width:280px;
+  max-height: 320px;
   background:#fff;
   border-radius:var(--radius-md);
   border:1px solid var(--border);
   box-shadow:0 10px 25px rgba(0,0,0,.08);
   z-index:1000;
+}
+.notification-overflow{
+    overflow: auto;
+    height:250px;
+    margin-bottom: 24px;
 }
 
 .dropdown-title{

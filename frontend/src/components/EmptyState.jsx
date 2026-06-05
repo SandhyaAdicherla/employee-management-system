@@ -16,7 +16,7 @@ function EmptyState() {
 
       <Link
         to="/add-employee"
-        className="btn btn-primary"
+        className="btn btn-primary btn-save"
       >
         Add Employee
       </Link>

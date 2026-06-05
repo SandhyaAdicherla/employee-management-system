@@ -10,6 +10,7 @@ const auth =
 
 const admin =
     require('../middleware/admin');
+const demoProtection = require('../middleware/demoProtection');
 
 router.get(
     '/',
@@ -26,12 +27,14 @@ router.get(
 router.post(
     '/',
     auth,
+    demoProtection,
     employeeController.addEmployee
 );
 
 router.put(
     '/:id',
     auth,
+    demoProtection,
     employeeController.updateEmployee
 );
 
@@ -39,6 +42,7 @@ router.delete(
     '/:id',
     auth,
     admin,
+    demoProtection,
     employeeController.deleteEmployee
 );
 
