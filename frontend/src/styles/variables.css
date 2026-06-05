@@ -1,0 +1,63 @@
+:root{
+
+  /* Brand */
+
+  --primary:#6d28d9;
+  --primary-hover:#5b21b6;
+
+  /* Text */
+
+  --text:#111827;
+  --text-light:#64748b;
+  --text-white : #ffff;
+
+  /* Backgrounds */
+
+  --bg-page:#f8fafc;
+  --bg-card:#ffffff;
+  --bg-section:#fafafa;
+
+  /* Borders */
+
+  --border:#e5e7eb;
+
+  /* Status */
+
+  --success:#16a34a;
+  --success-bg:#dcfce7;
+
+  --danger:#ef4444;
+  --danger-hover:#dc2626;
+  --danger-bg:#fef2f2;
+
+  /* Gradients */
+
+  --gradient-primary:
+    linear-gradient(
+      135deg,
+      #111827,
+      #6d28d9
+    );
+
+  /* Shadows */
+
+  --shadow-sm:
+    0 4px 12px rgba(0,0,0,.06);
+
+  --shadow-md:
+    0 10px 25px rgba(0,0,0,.08);
+
+  --shadow-lg:
+    0 20px 50px rgba(0,0,0,.15);
+
+  /* Radius */
+  --radius-sm:8px;
+
+  --radius-md:12px;
+
+  --radius-lg:16px;
+
+  --radius-xl:20px;
+
+  --radius-round:50%;
+}

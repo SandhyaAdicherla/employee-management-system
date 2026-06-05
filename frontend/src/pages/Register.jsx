@@ -1,6 +1,11 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../services/api";
+import {
+  validateField,
+  validateForm
+} from "../utils/validations";
+import "./Auth.css";
 
 function Register() {
 
@@ -18,53 +23,31 @@ function Register() {
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
+    const {
+      name,
+      value
+    } = e.target;
 
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
 
-    setErrors({
-      ...errors,
-      [e.target.name]: ""
-    });
+    setErrors(prev => ({
+      ...prev,
+      [name]:
+        validateField(
+          name,
+          value,
+          {
+            ...formData,
+            [name]: value
+          }
+        )
+    }));
+
   };
 
-  const validateForm = () => {
-
-    const newErrors = {};
-
-    if (!formData.username.trim()) {
-      newErrors.username = "Username is required";
-    }
-
-    if (!formData.email.trim()) {
-      newErrors.email = "Email is required";
-    }
-
-    if (
-      formData.email &&
-      !/\S+@\S+\.\S+/.test(formData.email)
-    ) {
-      newErrors.email = "Invalid email format";
-    }
-
-    if (!formData.password.trim()) {
-      newErrors.password = "Password is required";
-    }
-
-    if (
-      formData.password &&
-      formData.password.length < 6
-    ) {
-      newErrors.password =
-        "Password must be at least 6 characters";
-    }
-
-    setErrors(newErrors);
-
-    return Object.keys(newErrors).length === 0;
-  };
 
   const handleSubmit = async (e) => {
 
@@ -73,10 +56,29 @@ function Register() {
     setApiError("");
     setSuccess("");
 
-    if (!validateForm()) {
-      return;
-    }
+    const validationErrors =
+      validateForm(
+        formData,
+        [
+          "username",
+          "email",
+          "password"
+        ]
+      );
 
+    if (
+      Object.keys(
+        validationErrors
+      ).length > 0
+    ) {
+
+      setErrors(
+        validationErrors
+      );
+
+      return;
+
+    }
     try {
 
       setLoading(true);
@@ -175,14 +177,14 @@ function Register() {
 
             <div className="form-group mb-15">
 
-              <label>Username</label>
+              <label>Username <span className="required">*</span></label>
 
               <input
                 type="text"
                 name="username"
                 value={formData.username}
                 onChange={handleChange}
-                className="form-control"
+                className={`form-control ${errors.username? "input-error": ""}`}
               />
 
               {errors.username && (
@@ -195,14 +197,14 @@ function Register() {
 
             <div className="form-group mb-15">
 
-              <label>Email</label>
+              <label>Email <span className="required">*</span></label>
 
               <input
                 type="email"
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                className="form-control"
+                className={`form-control ${errors.email? "input-error": ""}`}
               />
 
               {errors.email && (
@@ -215,14 +217,14 @@ function Register() {
 
             <div className="form-group mb-15">
 
-              <label>Password</label>
+              <label>Password <span className="required">*</span></label>
 
               <input
                 type="password"
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
-                className="form-control"
+                className={`form-control ${errors.password? "input-error": ""}`}
               />
 
               {errors.password && (
@@ -255,7 +257,7 @@ function Register() {
               to="/login"
               className="link"
             >
-              Login
+              Sign in
             </Link>
 
           </p>

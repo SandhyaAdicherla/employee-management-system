@@ -1,3 +1,4 @@
+import "./CommonModal.css";
 function CommonModal({
   title,
   children,

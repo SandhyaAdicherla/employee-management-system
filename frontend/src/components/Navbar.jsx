@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { ToastContext } from "../Context/ToastContext";
-import { useContext, useState } from "react";
+import { useContext, useRef, useState } from "react";
 import {
   FiHome,
   FiUsers,
@@ -19,6 +19,7 @@ import { AuthContext } from "../Context/Authcontext";
 import { getInitials } from "../utils/Avatar.util";
 import ChangePasswordModal from "./ChangePasswordModal";
 import UserProfileModal from "./UserProfileModal";
+import "./Navbar.css";
 
 function Navbar() {
 
@@ -31,7 +32,8 @@ function Navbar() {
   const [showProfileModal,setShowProfileModal] = useState(false);
   const [showPasswordModal,setShowPasswordModal] = useState(false);
   const {user,employeeId,setEmployeeId,setUser} = useContext(AuthContext);
-
+  const profileRef = useRef(null);
+  const notificationRef = useRef(null);
   const handleLogout = () => {
 
     localStorage.removeItem("token");
@@ -109,7 +111,6 @@ function Navbar() {
 
 };
 const handleMyProfile = () => {
-  console.log(employeeId);
 
   if (employeeId) {
     navigate(
@@ -122,6 +123,42 @@ const handleMyProfile = () => {
     setShowProfileModal(true);
 
 };
+useEffect(() => {
+
+  const handleClickOutside = (event) => {
+    if (
+      profileRef.current &&
+      !profileRef.current.contains(
+        event.target
+      )
+    ) {
+      setShowMenu(false);
+    }
+
+    if (
+      notificationRef.current &&
+      !notificationRef.current.contains(
+        event.target
+      )
+    ) {
+      setShowNotifications(false);
+    }
+
+  };
+
+  document.addEventListener(
+    "mousedown",
+    handleClickOutside
+  );
+
+  return () => {
+    document.removeEventListener(
+      "mousedown",
+      handleClickOutside
+    );
+  };
+
+}, []);
   return (
     <nav className="navbar">
 
@@ -197,7 +234,7 @@ const handleMyProfile = () => {
 
       {showNotifications && (
 
-        <div className="notification-dropdown">
+        <div className="notification-dropdown" ref={notificationRef }>
 
           <div className="dropdown-title">
             Notifications
@@ -286,7 +323,7 @@ const handleMyProfile = () => {
 
         {showMenu && (
 
-          <div className="profile-dropdown">
+          <div className="profile-dropdown" ref={profileRef}>
 
             <div className="dropdown-header">
 
@@ -302,7 +339,8 @@ const handleMyProfile = () => {
                 </h4>
 
                 <p>
-                  {user?.role}
+                    {user?.role === "admin" ? "System Administrator"
+                      : user?.role === "employee" ? "Employee" : "Registered User"}
                 </p>
 
               </div>

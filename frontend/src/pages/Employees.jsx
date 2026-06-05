@@ -15,6 +15,7 @@ deleteEmployee
 import { ToastContext } from "../Context/ToastContext";
 import CommonModal from "../components/CommonModal";
 import { AuthContext } from "../Context/Authcontext";
+import "./Employees.css";
 
 function Employees() {
 
@@ -204,7 +205,7 @@ return (
 
         <Link
           to="/add-employee"
-          className="add-employee-btn"
+          className="add-employee-btn btn-save"
         >
 
           + Add Employee
@@ -275,6 +276,7 @@ return (
       btnClass = "btn-danger"
     >
        <p>
+          This action cannot be undone.The employee record will be permanently removed.
           Are you sure you want to delete this employee?
         </p>
   </CommonModal>

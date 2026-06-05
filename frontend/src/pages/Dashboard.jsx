@@ -7,12 +7,14 @@ import api from "../services/api";
 import { FiUserPlus } from "react-icons/fi";
 import { AuthContext } from "../Context/Authcontext";
 import { getInitials } from "../utils/Avatar.util";
+import "./Dashboard.css";
 
 function Dashboard() {
 
   const [employees, setEmployees] = useState([]);
 
   const {user,employeeId} = useContext(AuthContext);
+  const isAdmin = user?.role === "admin";
 
   useEffect(() => {
 
@@ -55,6 +57,26 @@ function Dashboard() {
     );
   const displayedEmployees = recentEmployees .length <= 3
     ? recentEmployees : recentEmployees.slice(0, 4);
+
+    const roleMessages = {
+    admin: {
+      badge: "Administrator Access",
+      description:
+        "You have full access to manage employees, update records, monitor departments, and maintain company information."
+    },
+
+    employee: {
+      badge: "Employee Access",
+      description:
+        "View your employee profile, track personal information, and keep your records up to date."
+    },
+
+    user: {
+      badge: "User Access",
+      description:
+        "Manage your account information and access available system features."
+    }
+  };
  return (
   <>
     <Navbar />
@@ -66,7 +88,7 @@ function Dashboard() {
         <div className="welcome-content">
 
           <span className="welcome-badge">
-            Employee Management System
+            {roleMessages[user?.role]?.badge}
           </span>
 
           <h1>
@@ -78,10 +100,7 @@ function Dashboard() {
           </h1>
 
           <p>
-            Manage employees,
-            departments and company
-            operations from a single
-            dashboard.
+            {roleMessages[user?.role]?.description}
           </p>
 
         </div>

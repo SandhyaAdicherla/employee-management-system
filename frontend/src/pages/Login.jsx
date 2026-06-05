@@ -3,6 +3,11 @@ import { Link, useNavigate } from "react-router-dom";
 import api from "../services/api";
 import { AuthContext } from "../Context/Authcontext";
 import { getEmployees } from "../services/employeeService";
+import {
+  validateField,
+  validateForm
+} from "../utils/validations";
+import "./Auth.css";
 
 function Login() {
 
@@ -15,33 +20,31 @@ function Login() {
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
-    setErrors({
-      ...errors,
-      [e.target.name]: ""
-    });
+    const {
+      name,
+      value
+    } = e.target;
+
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+
+    setErrors(prev => ({
+      ...prev,
+      [name]:
+        validateField(
+          name,
+          value,
+          {
+            ...formData,
+            [name]: value
+          }
+        )
+    }));
 
   };
 
-  const validateForm = () => {
-
-    const newErrors = {};
-
-    if (!formData.email.trim()) {
-      newErrors.email = "Email is required";
-    }
-
-    if (!formData.password.trim()) {
-      newErrors.password = "Password is required";
-    }
-
-    setErrors(newErrors);
-
-    return Object.keys(newErrors).length === 0;
-  };
 
   const handleSubmit = async (e) => {
 
@@ -50,7 +53,28 @@ function Login() {
     setApiError("");
     setSuccess("");
 
-    if (!validateForm()) return;
+    const validationErrors =
+      validateForm(
+        formData,
+        [
+          "email",
+          "password"
+        ]
+      );
+
+    if (
+      Object.keys(
+        validationErrors
+      ).length > 0
+    ) {
+
+      setErrors(
+        validationErrors
+      );
+
+      return;
+
+    }
 
     try {
 
@@ -60,7 +84,6 @@ function Login() {
         "/auth/login",
         formData
       );
-
       localStorage.setItem(
         "token",
         response.data.token
@@ -76,9 +99,7 @@ function Login() {
       const employeeResponse = await getEmployees();
       const employee = employeeResponse.data.find(emp =>
         emp.email ===loggedUser.email);
-      console.log("employees",employeeResponse)
       if (employee) {
-        console.log("itemset",employee.id)
         localStorage.setItem("employeeId",employee.id);
 
         setEmployeeId(employee.id);
@@ -164,14 +185,14 @@ function Login() {
 
           <div className="form-group mb-15">
 
-            <label>Email</label>
+            <label>Email <span className="required">*</span></label>
 
             <input
               type="email"
               name="email"
               value={formData.email}
               onChange={handleChange}
-              className="form-control"
+              className={`form-control ${errors.email? "input-error": ""}`}
             />
 
             {errors.email && (
@@ -184,14 +205,14 @@ function Login() {
 
           <div className="form-group mb-15">
 
-            <label>Password</label>
+            <label>Password <span className="required">*</span></label>
 
             <input
               type="password"
               name="password"
               value={formData.password}
               onChange={handleChange}
-              className="form-control"
+              className={`form-control ${errors.password? "input-error": ""}`}
             />
 
             {errors.password && (
@@ -227,7 +248,7 @@ function Login() {
           </p>
 
           <p>
-            Password: admin123
+            Password: sarah@987
           </p>
 
         </div>
@@ -243,7 +264,7 @@ function Login() {
           </p>
 
           <p>
-            Password: sarah@987
+            Password: sneha123
           </p>
 
         </div>

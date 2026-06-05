@@ -87,7 +87,7 @@ function AddEmployee() {
               </h2>
 
               <p>
-                Create a new employee profile
+                Employees must register using the email address assigned here.
               </p>
 
             </div>

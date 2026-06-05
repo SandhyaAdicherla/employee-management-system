@@ -102,14 +102,14 @@ function EditEmployee() {
 
         <div className="card">
 
-          <div className="form-header">
+          <div className="form-header mb-20">
 
             <div>
 
               <h2>Edit Employee</h2>
 
               <p>
-                Update employee information
+                Update employee information and organizational details.
               </p>
 
             </div>

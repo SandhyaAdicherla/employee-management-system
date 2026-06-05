@@ -1,5 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import {
+  validateField,
+  validateForm
+} from "../utils/validations";
 
 function EmployeeForm({
 formData,
@@ -11,67 +15,62 @@ const navigate = useNavigate();
 const [errors, setErrors] = useState({});
 const handleChange = (e) => {
 
-  setFormData({
-    ...formData,
-    [e.target.name]: e.target.value
-  });
+  const {
+    name,
+    value
+  } = e.target;
 
-  setErrors({
-    ...errors,
-    [e.target.name]: ""
-  });
+  setFormData(prev => ({
+    ...prev,
+    [name]: value
+  }));
 
-};
-const validateForm = () => {
-
-  const newErrors = {};
-
-  if (!formData.employee_code?.trim()) {
-    newErrors.employee_code =
-      "Employee code is required";
-  }
-
-  if (!formData.name?.trim()) {
-    newErrors.name =
-      "Name is required";
-  }
-
-  if (!formData.email?.trim()) {
-    newErrors.email =
-      "Email is required";
-  }
-
-  if (!formData.designation?.trim()) {
-    newErrors.designation =
-      "Designation is required";
-  }
-
-  if (!formData.department?.trim()) {
-    newErrors.department =
-      "Department is required";
-  }
-
-  if (!formData.salary) {
-    newErrors.salary =
-      "Salary is required";
-  }
-
-  if (!formData.joining_date) {
-    newErrors.joining_date =
-      "Joining date is required";
-  }
-
-  setErrors(newErrors);
-
-  return Object.keys(newErrors).length === 0;
+  setErrors(prev => ({
+    ...prev,
+    [name]:
+      validateField(
+        name,
+        value,
+        {
+          ...formData,
+          [name]: value
+        }
+      )
+  }));
 
 };
+
 const onFormSubmit = (e) => {
 
   e.preventDefault();
 
-  if (!validateForm()) {
+  const validationErrors =
+    validateForm(
+      formData,
+      [
+        "name",
+        "employee_code",
+        "email",
+        "department",
+        "designation",
+        "salary",
+        "joining_date",
+        "manager"
+      ]
+    );
+
+  if (
+    Object.keys(
+      validationErrors
+    ).length > 0
+  ) {
+
+    setErrors(
+      validationErrors
+    );
+
     return;
+
   }
 
   handleSubmit(e);
@@ -91,7 +90,7 @@ return (
         name="employee_code"
         value={formData.employee_code || ""}
         onChange={handleChange}
-        className="form-control"
+        className={`form-control ${errors.employee_code? "input-error": ""}`}
       />
       {errors.employee_code && (
         <small className="field-error">
@@ -107,7 +106,7 @@ return (
         name="name"
         value={formData.name || ""}
         onChange={handleChange}
-        className="form-control"
+        className={`form-control ${errors.name? "input-error": ""}`}
       />
       {errors.name && (
         <small className="field-error">
@@ -123,7 +122,7 @@ return (
         name="email"
         value={formData.email || ""}
         onChange={handleChange}
-        className="form-control"
+        className={`form-control ${errors.email? "input-error": ""}`}
       />
       {errors.email && (
         <small className="field-error">
@@ -139,7 +138,7 @@ return (
         name="designation"
         value={formData.designation || ""}
         onChange={handleChange}
-        className="form-control"
+        className={`form-control ${errors.designation? "input-error": ""}`}
       />
       {errors.designation && (
         <small className="field-error">
@@ -155,7 +154,7 @@ return (
         name="department"
         value={formData.department || ""}
         onChange={handleChange}
-        className="form-control"
+        className={`form-control ${errors.department? "input-error": ""}`}
       />
       {errors.department && (
         <small className="field-error">
@@ -171,7 +170,7 @@ return (
         name="manager"
         value={formData.manager || ""}
         onChange={handleChange}
-        className="form-control"
+        className={`form-control ${errors.manager? "input-error": ""}`}
       />
       {errors.manager && (
         <small className="field-error">
@@ -187,7 +186,7 @@ return (
         name="salary"
         value={formData.salary || ""}
         onChange={handleChange}
-        className="form-control"
+        className={`form-control ${errors.salary? "input-error": ""}`}
       />
       {errors.salary && (
         <small className="field-error">
@@ -203,7 +202,7 @@ return (
         name="joining_date"
         value={formData.joining_date || ""}
         onChange={handleChange}
-        className="form-control"
+        className={`form-control ${errors.joining_date? "input-error": ""}`}
       />
       {errors.joining_date && (
         <small className="field-error">

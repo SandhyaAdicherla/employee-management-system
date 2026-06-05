@@ -10,6 +10,7 @@ import { ToastContext } from './Context/ToastContext'
 import { useContext } from 'react'
 import Toast from './components/Toast'
 import EmployeeDetails from './pages/EmployeeDetails'
+import '../src/components/Toast.css'
 
 function App() {
   const { toast } =

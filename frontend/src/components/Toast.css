@@ -1,0 +1,29 @@
+
+/* Tast styles  */
+
+.toast {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+
+  background:var(--success);
+  color: var(--text-white);
+
+  padding: 15px 20px;
+
+  border-radius: var(--radius-sm);
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  z-index: 9999;
+}
+
+.toast.error {
+  background: var(--danger-hover);
+}
+
+.toast-icon {
+  font-weight: bold;
+}
